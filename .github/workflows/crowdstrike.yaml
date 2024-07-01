@@ -1,0 +1,24 @@
+name: Container Security Scan
+
+on: [push, pull_request]
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Build Docker image
+      run: docker build -t my-app .
+
+    - name: Scan Docker image with CrowdStrike Falcon
+      env:
+        CROWDSTRIKE_CLIENT_ID: 42e4dbe759554d15bd62bc558389a182
+        CROWDSTRIKE_CLIENT_SECRET: ct5A2CvFD3jmXRI817yQ4LdoaBqzVp6fswbH0en9
+      run: |
+        docker run --rm -v /var/run/docker.sock:/var/run/docker.sock crowdstrike/falcon-image-assessment scan \
+          --client-id $CROWDSTRIKE_CLIENT_ID \
+          --client-secret $CROWDSTRIKE_CLIENT_SECRET \
+          --image my-app
