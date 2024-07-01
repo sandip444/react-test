@@ -12,10 +12,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Authenticate Docker
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
       - name: CrowdStrike Container Image Scan
         uses: crowdstrike/container-image-scan-action@v1.1.0
         with:
-          falcon_client_id: 42e4dbe759554d15bd62bc558389a182
+          falcon_client_id: ${{ secrets.FALCON_CLIENT_ID }}
           container_repository: docker.io/library/busybox
         env:
-          FALCON_CLIENT_SECRET: ct5A2CvFD3jmXRI817yQ4LdoaBqzVp6fswbH0en9
+          FALCON_CLIENT_SECRET: ${{ secrets.FALCON_CLIENT_SECRET }}
